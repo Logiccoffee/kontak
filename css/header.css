@@ -1,0 +1,271 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+.top-bar-responsive {
+display: none;
+
+}
+
+/* Top Bar Styling */
+.top-bar {
+    background-color: #09431f;
+    color: #ffffff;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.top-bar span {
+    margin: 0 10px;
+}
+
+.top-bar a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.top-bar a:hover{
+    color: #c9994c;
+}
+
+.address {
+    margin-left: auto;
+}
+
+/* Main Header Styling */
+.header {
+    font-family: "Signika", Arial, sans-serif;
+    background-color: #ffffff;
+    padding: 15px 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+/* Logo and Brand Name */
+.brand-logo {
+    width: 50px;
+    height: 50px;
+}
+
+.brand-name {
+    font-weight: bold;
+    color: #09431f;
+    font-family: "Signika", sans-serif;
+}
+
+/* Logo and Brand Name Wrapper */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 20px;
+    font-family: "Signika", sans-serif;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #805700;
+    font-weight: 500;
+    font-size: large;
+    font-family: "Signika", Arial, sans-serif;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #09431f;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #0e6b37;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 5px;
+    width: 400px;
+    max-width: 100%;
+    margin-right: 30px;
+    transition: box-shadow 0.3s ease;
+}
+
+.search-bar:hover {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.search-bar input {
+    font-family: "Signika", Arial, sans-serif;
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    padding-left: 5px;
+    font-size: 0.9em;
+}
+
+.search-bar input:focus {
+    outline: none;
+}
+
+.search-button {
+    background-color: #c9994c;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #b58941;
+}
+
+/* User and Cart Section */
+.user-cart {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cart-icon {
+    position: relative;
+    font-size: 1.2em;
+}
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: red;
+    color: #ffffff;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 0.7em;
+}
+
+.profile {
+    cursor: pointer;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    /* Stack top bar items */
+    .top-bar {
+        display: none;
+    }
+
+    /* Top Bar Styling */
+.top-bar-responsive {
+    background-color: #09431f;
+    color: #ffffff;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.top-bar-responsive span {
+    margin: 0 10px;
+}
+
+.top-bar-responsive a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.top-bar-responsive a:hover{
+    color: #c9994c;
+}
+
+    /* Adjust navbar layout */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    /* Center align brand logo and name */
+    .brand {
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Stack nav links */
+    .nav-links {
+        justify-content: center;
+        width: 100%;
+        gap: 15px;
+    }
+
+    /* Resize search bar */
+    .search-bar {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    /* Align user and cart section to center */
+    .user-cart {
+        justify-content: center;
+        width: 100%;
+        gap: 10px;
+    }
+
+}
+
+@media (max-width: 480px) {
+    /* Further adjustments for very small screens */
+    .brand-name {
+        font-size: 1.2em;
+    }
+
+    .nav-links a {
+        font-size: medium;
+    }
+
+    .search-button {
+        padding: 10px;
+        font-size: 16px;
+    }
+}
