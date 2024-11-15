@@ -10,13 +10,14 @@ import Point from "https://cdn.skypack.dev/ol/geom/Point.js";
 import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 
-const logicCoffeeCoords = [107.57504888132391, -6.874693043534695];
+const attributions =
+  '<a href="https://petapedia.github.io/" target="_blank">&copy; PetaPedia Indonesia</a>';
+
+const logicCoffeeCoords = [107.57504888132391, -6.874693043534695]; // Longitude, Latitude
 
 // Basemap layer
 const basemap = new TileLayer({
-  source: new OSM({
-    attributions: '<a href="https://petapedia.github.io/" target="_blank">&copy; PetaPedia Indonesia</a>',
-  }),
+  source: new OSM({ attributions: attributions }),
 });
 
 // Map view
@@ -49,11 +50,13 @@ const markerLayer = new VectorLayer({
 
 // Display map function
 function displayMap() {
-  new Map({
+  const map = new Map({
     target: "map",
     layers: [basemap, markerLayer],
     view: defaultstartmap,
   });
 }
 
-window.addEventListener("DOMContentLoaded", displayMap);
+window.addEventListener("DOMContentLoaded", () => {
+  displayMap();
+});
