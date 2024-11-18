@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lokasi | Logic Coffee</title>
+    <title>Kontak | Logic Coffee</title>
     <link rel="icon" href="assets/logo.png" type="image/x-icon" />
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
@@ -39,10 +39,22 @@ body {
   align-items: flex-start;
   padding: 20px;
   gap: 20px;
-}
 
-.info-box {
+}
+.bgimg {
+  background-image: url('assets/bgimgplace.jpg');
   width: 45%;
+  height: 315px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  margin-left: 20px;
+}
+.info-box {
+  width: 65%;
+  margin-top: 70px;
+  margin-left: -20px;
+  margin-right: 200px;
   padding: 20px;
   background-color: #ffffff;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -57,13 +69,22 @@ body {
 .info-box p {
   margin: 8px 0;
   line-height: 1.5;
+  color: #09431f;
+  text-decoration: none;
+}
+
+.info-box p a {
+  margin: 8px 0;
+  line-height: 1.5;
+  color: #09431f;
+  text-decoration: none;
 }
 
 #map {
   width: 50%;
-  height: 525px;
+  height: 320px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 20px;
 }
   </style>
   <body>
@@ -78,7 +99,7 @@ body {
           ><a><i class="fa-solid fa-clock"></i> Buka Jam 08.00 - 18.00</a></span
         >
         <span class="address"
-          ><a href="https://g.co/kgs/3VB5ztr"
+          ><a href="https://logiccoffee.id.biz.id/kontak/"
             ><i class="fa-solid fa-map-marker-alt"></i> Jl. Sariasih No. 54,
             Sarijadi</a
           ></span
@@ -88,7 +109,7 @@ body {
       <!-- Top Bar Responsive Mode -->
       <div class="top-bar-responsive">
         <span class="address"
-          ><a href="https://g.co/kgs/3VB5ztr"
+          ><a href="https://logiccoffee.id.biz.id/kontak/"
             ><i class="fa-solid fa-map-marker-alt"></i> Jl. Sariasih No. 54</a
           ></span
         >
@@ -121,7 +142,7 @@ body {
             <a href="https://logiccoffee.id.biz.id/"><i class="fa fa-house"></i> Beranda</a>
             <a href="https://logiccoffee.github.io/menu/"><i class="fa fa-mug-hot"></i> Menu</a>
             <a href="https://logiccoffee.id.biz.id/tentang.html"><i class="fa-solid fa-info-circle"></i> Tentang Kami</a>
-            <a href="#"><i class="fa-solid fa-phone"></i>Kontak</a>
+            <a href="https://logiccoffee.id.biz.id/kontak/"><i class="fa-solid fa-phone"></i>Kontak</a>
             
           </nav>
   
@@ -135,12 +156,14 @@ body {
 
    <!-- Konten Utama -->
   <div class="content-container">
+    <div class="bgimg">
     <div class="info-box">
-      <h2>Temukan kami di sini</h2>
+      <h2>Temui Kami di</h2>
       <p><strong><i class="fa-solid fa-location-dot"></i> Alamat</strong><br>Jl. Sariasih No. 54, Sarijadi, Kota Bandung, Jawa Barat, Indonesia</p>
-      <p><strong><i class="fa-brands fa-instagram"></i> Instagram</strong><br>@logic_coffee</p>
-      <p><strong><i class="fa-brands fa-whatsapp"></i> WhatsApp</strong><br>+62 851-8310-4981</p>
+      <p><strong><i class="fa-brands fa-instagram"></i> <a href="https://www.instagram.com/logic_coffeee">Instagram</strong><br>@logic_coffee</a></p>
+      <p><strong><i class="fa-brands fa-whatsapp"></i><a href="https://wa.me/6285183104981"> WhatsApp</strong><br>+62 851-8310-4981</a></p>
     </div>
+  </div>
     <div id="map"></div>
 
   </div>
