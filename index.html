@@ -42,6 +42,7 @@
 
 body {
   font-family: 'Lato', sans-serif;
+  color: #805700;
 }
 
 .content-container {
@@ -97,6 +98,74 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
 }
+@media screen and (max-width: 1024px) {
+  .content-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bgimg, #map {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .info-box {
+    width: 50%;
+    margin: 20px 0;
+    height: 100%;
+  
+    
+    
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .info-box {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 200%;
+    width: 100%;
+  }
+
+  .content-container {
+    gap: 50px;
+  }
+
+  element  {
+    gap: 50px;
+  }
+
+  .info-box h2 {
+    font-size: 13px;
+  }
+
+  .info-box p {
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .bgimg, #map {
+    height: 200px;
+  }
+
+  .info-box {
+    padding: 10px;
+    height: 100%;
+    width: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .info-box h2 {
+    font-size: 1.25rem;
+  }
+
+  .info-box p {
+    font-size: 11.5px;
+  }
+}
   </style>
   <body>
     <!-- Top Bar -->
@@ -148,12 +217,15 @@ body {
               <i class="fa-solid fa-magnifying-glass"></i>
             </button>
           </div>
-  
+          <div class="hamburger" onclick="toggleMenu()" style="display: none;">☰</div>
           <nav class="nav-links">
             <a href="https://logiccoffee.id.biz.id/"><i class="fa fa-house"></i> Beranda</a>
             <a href="https://logiccoffee.github.io/menu/"><i class="fa fa-mug-hot"></i> Menu</a>
             <a href="https://logiccoffee.id.biz.id/tentang.html"><i class="fa-solid fa-info-circle"></i> Tentang Kami</a>
             <a href="https://logiccoffee.id.biz.id/kontak/"><i class="fa-solid fa-phone"></i>Kontak</a>
+            <a href="http://logiccoffee.id.biz.id/login/" class="btn-login">
+              <i class="fa-solid fa-user"></i> Login
+          </a>
             
           </nav>
   
@@ -209,5 +281,20 @@ body {
         </div>
       </footer>
     <script type="module" src="map.js"></script>
+    <script>
+      function toggleMenu() {
+        const navLinks = document.querySelector('.nav-links');
+        const searchBar = document.querySelector('.search-bar');
+  
+        navLinks.classList.toggle('active');
+  
+        if (window.innerWidth <= 768) {
+          const searchBarInNav = navLinks.querySelector('.search-bar');
+          if (!searchBarInNav) {
+            navLinks.prepend(searchBar); // Pindahkan search bar ke dalam menu pop-up
+          }
+        }
+      }
+    </script>
   </body>
 </html>
