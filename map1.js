@@ -7,79 +7,122 @@ import VectorLayer from "https://cdn.skypack.dev/ol/layer/Vector.js";
 import VectorSource from "https://cdn.skypack.dev/ol/source/Vector.js";
 import Feature from "https://cdn.skypack.dev/ol/Feature.js";
 import Point from "https://cdn.skypack.dev/ol/geom/Point.js";
+import Circle from "https://cdn.skypack.dev/ol/geom/Circle.js";
 import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js";
 import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
+import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
+
+const attributions =
+  '<a href="https://petapedia.github.io/" target="_blank">&copy; PetaPedia Indonesia</a>';
+
 
 // Koordinat Logic Coffee
 const logicCoffeeCoords = [107.57504888132391, -6.874693043534695]; // Longitude, Latitude
-let userCoords = null; // Koordinat pengguna
+let clickedCoordinates = logicCoffeeCoords; // Default lokasi di Logic Coffee
+let map;
 
-// Layer peta dasar
+// Basemap layer
 const basemap = new TileLayer({
   source: new OSM(),
 });
 
-// View peta
+// Map view
 const mapView = new View({
   center: fromLonLat(logicCoffeeCoords),
-  zoom: 14,
+  zoom: 18,
 });
 
-// Marker untuk Logic Coffee
-const logicMarker = new Feature({
-  geometry: new Point(fromLonLat(logicCoffeeCoords)),
-});
-logicMarker.setStyle(
-  new Style({
-    image: new Icon({
-      src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-      scale: 0.07,
-    }),
-  })
-);
-
-// Layer marker.
-const markerLayer = new VectorLayer({
-  source: new VectorSource({
-    features: [logicMarker],
+// Marker style
+const markerStyle = new Style({
+  image: new Icon({
+    src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+    scale: 0.07,
   }),
 });
 
-// Layer rute
-const routeLayer = new VectorLayer({
+// Marker layer
+const markerLayer = new VectorLayer({
+  source: new VectorSource(),
+});
+
+// Circle layer for radius visualization
+const circleLayer = new VectorLayer({
   source: new VectorSource(),
   style: new Style({
     stroke: new Stroke({
       color: "blue",
-      width: 3,
+      width: 2,
+    }),
+    fill: new Fill({
+      color: "rgba(0, 0, 255, 0.1)",
     }),
   }),
 });
 
-// Inisialisasi peta
-const map = new Map({
-  target: "map",
-  layers: [basemap, markerLayer, routeLayer],
-  view: mapView,
-});
+// Fungsi untuk menampilkan peta
+function displayMap() {
+  map = new Map({
+    target: "map",
+    layers: [basemap, markerLayer, circleLayer],
+    view: mapView,
+  });
+
+  // Handle klik pada peta
+  map.on("click", (event) => {
+    const coords = toLonLat(event.coordinate);
+    clickedCoordinates = coords; // Simpan koordinat hasil klik
+    updateMarker(coords);
+  });
+}
+
+// Fungsi untuk menambahkan atau memperbarui marker
+function updateMarker(coords) {
+  const marker = new Feature({
+    geometry: new Point(fromLonLat(coords)),
+  });
+  marker.setStyle(markerStyle);
+
+  // Hapus marker sebelumnya dan tambahkan yang baru
+  markerLayer.getSource().clear();
+  markerLayer.getSource().addFeature(marker);
+}
+
+// Fungsi untuk menggambar lingkaran radius
+function drawCircle(coords, radius) {
+  const circleFeature = new Feature({
+    geometry: new Circle(fromLonLat(coords), radius * 1000), // Radius dalam meter
+  });
+
+  // Hapus lingkaran sebelumnya dan tambahkan yang baru
+  circleLayer.getSource().clear();
+  circleLayer.getSource().addFeature(circleFeature);
+}
 
 // Fungsi untuk menggambar rute
 function drawRoute(startCoords, endCoords) {
-  const route = new Feature({
+  const routeFeature = new Feature({
     geometry: new LineString([fromLonLat(startCoords), fromLonLat(endCoords)]),
   });
 
-  routeLayer.getSource().clear();
-  routeLayer.getSource().addFeature(route);
+  const routeLayer = new VectorLayer({
+    source: new VectorSource({
+      features: [routeFeature],
+    }),
+    style: new Style({
+      stroke: new Stroke({
+        color: "red",
+        width: 3,
+      }),
+    }),
+  });
 
-  // Zoom ke rute
-  mapView.fit(route.getGeometry(), { padding: [50, 50, 50, 50] });
+  map.addLayer(routeLayer);
 }
 
-// Fungsi untuk mendapatkan koordinat dari wilayah
-async function getCoordinates(region) {
+// Fungsi untuk mendapatkan koordinat wilayah berdasarkan nama
+async function getRegionCoordinates(region) {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
     region
   )}&format=json&limit=1`;
@@ -91,56 +134,47 @@ async function getCoordinates(region) {
       alert("Region tidak ditemukan. Silakan coba nama lain.");
       return null;
     }
-
-    const { lat, lon } = data[0];
-    return [parseFloat(lon), parseFloat(lat)];
+    return [parseFloat(data[0].lon), parseFloat(data[0].lat)];
   } catch (error) {
-    alert("Terjadi kesalahan saat mencari wilayah. Silakan coba lagi.");
     console.error(error);
+    alert("Gagal mendapatkan data wilayah.");
     return null;
   }
 }
 
-// Event listener untuk form jarak
-document.getElementById("max-distance").closest("form").addEventListener("submit", (event) => {
+// Event listener untuk radius berdasarkan jarak
+document.getElementById("distance-form").addEventListener("submit", (event) => {
   event.preventDefault();
-
   const maxDistance = parseFloat(document.getElementById("max-distance").value);
+
   if (isNaN(maxDistance) || maxDistance <= 0) {
-    alert("Masukkan jarak yang valid dalam kilometer.");
+    alert("Masukkan jarak yang valid.");
     return;
   }
 
-  if (!userCoords) {
-    alert("Klik pada peta untuk menentukan lokasi pengguna.");
-    return;
-  }
-
-  // Menggambar rute jika jarak valid
-  drawRoute(userCoords, logicCoffeeCoords);
-  alert(`Rute sejauh ${maxDistance} km dari lokasi Anda ke Logic Coffee telah ditampilkan.`);
+  drawCircle(clickedCoordinates, maxDistance);
+  alert(`Radius ${maxDistance} km diterapkan pada lokasi.`);
 });
 
-// Event listener untuk form region
-document.getElementById("region").closest("form").addEventListener("submit", async (event) => {
+// Event listener untuk batas wilayah (region)
+document.getElementById("region-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-
   const region = document.getElementById("region").value;
+
   if (!region) {
-    alert("Masukkan nama wilayah yang valid.");
+    alert("Masukkan nama wilayah.");
     return;
   }
 
-  const regionCoords = await getCoordinates(region);
+  const regionCoords = await getRegionCoordinates(region);
   if (regionCoords) {
-    // Menggambar rute dari wilayah ke Logic Coffee
+    drawCircle(regionCoords, 5); // Radius default 5 km di sekitar wilayah
     drawRoute(regionCoords, logicCoffeeCoords);
-    alert(`Rute dari "${region}" ke Logic Coffee telah ditampilkan.`);
+    alert(`Wilayah "${region}" ditemukan, rute menuju Logic Coffee ditampilkan.`);
   }
 });
 
-// Event listener untuk klik peta (menentukan lokasi pengguna)
-map.on("click", (event) => {
-  userCoords = toLonLat(event.coordinate);
-  alert(`Lokasi pengguna telah ditentukan: ${userCoords}`);
+// Inisialisasi peta
+window.addEventListener("DOMContentLoaded", () => {
+  displayMap();
 });
