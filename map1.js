@@ -12,6 +12,7 @@ import Point from "https://cdn.skypack.dev/ol/geom/Point.js";
 import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
 import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
+import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 
 // Koordinat Logic Coffee
 const logicCoffeeCoords = [107.57504888132391, -6.874693043534695]; // Longitude, Latitude
@@ -72,7 +73,9 @@ const regionLayer = new VectorLayer({
 // Fungsi untuk mendapatkan data jalan dari API
 async function fetchRoads() {
   try {
-    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads");
+    const response = await fetch(
+      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads"
+    );
     const data = await response.json();
     data.forEach((road) => {
       const coordinates = road.coordinates.map((coord) => fromLonLat(coord));
@@ -89,7 +92,9 @@ async function fetchRoads() {
 // Fungsi untuk mendapatkan data wilayah dari API
 async function fetchRegion() {
   try {
-    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region");
+    const response = await fetch(
+      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region"
+    );
     const data = await response.json();
     data.forEach((region) => {
       const coordinates = region.coordinates.map((ring) =>
