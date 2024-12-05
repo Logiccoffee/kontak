@@ -109,17 +109,6 @@ function drawLine(userCoords) {
   lineLayer.getSource().addFeature(lineFeature);
 }
 
-// Menangani klik untuk menambahkan marker dan menggambar garis
-map.on('click', (event) => {
-  const coords = toLonLat(event.coordinate);
-  clickedCoordinates = coords; // Simpan koordinat yang diklik
-  updateMarker(coords); // Tambahkan marker di titik klik
-
-  // Gambar garis dari marker baru ke Logic Coffee
-  drawLine(coords);
-});
-
-
 // Fungsi untuk menambahkan atau memperbarui marker
 function updateMarker(coords) {
   const marker = new Feature({
