@@ -108,8 +108,38 @@ function getCookie(name) {
   return null; // Jika cookie tidak ditemukan
 }
 
-// Fungsi untuk mengirimkan permintaan ke backend
-function searchRoads(maxDistance) {
+// Fungsi untuk fetch data dari backend
+async function fetchRoads(longitude, latitude, maxDistance) {
+  try {
+    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Login: "v4.public.eyJhbGlhcyI6IlNpbmR5IE1hdWxpbmEiLCJleHAiOiIyMDI0LTEyLTA2VDExOjI0OjU5WiIsImlhdCI6IjIwMjQtMTItMDVUMTc6MjQ6NTlaIiwiaWQiOiI2MjgzMTk1ODAwMDIyIiwibmJmIjoiMjAyNC0xMi0wNVQxNzoyNDo1OVoifVy33N_6AaQpI2Igrt7HAxzD2z5D8Z4blvKNmwMrXW4Z6vw9vdNGOAl-wkMfShMeioeW32RS9OHI8Sgb_v6B1gI"
+
+      },
+      body: JSON.stringify({
+        long: longitude,
+        lat: latitude,
+        max_distance: maxDistance,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Roads fetched:", data);
+    return data; // Data dari backend
+  } catch (error) {
+    console.error("Error fetching roads:", error);
+    return null;
+  }
+}
+
+// Fungsi untuk mencari jalan dan menampilkannya
+async function searchRoads(maxDistance) {
   const token = getCookie("login"); // Ambil token dari cookie
 
   // Periksa apakah token tersedia
@@ -118,36 +148,16 @@ function searchRoads(maxDistance) {
     return;
   }
 
-  fetch("https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json", // Wajib ada
-      "Login": token, // Token autentikasi
-    },
-    body: JSON.stringify({
-      longitude: clickedCoordinates[0], // Longitude dari koordinat yang diklik
-      latitude: clickedCoordinates[1],  // Latitude dari koordinat yang diklik
-      maxDistance: maxDistance, // Jarak maksimal (dalam kilometer)
-    }),
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Gagal mendapatkan data dari server.");
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data && data.length > 0) {
-        console.log("Jalan ditemukan:", data);
-        alert(`Jalan ditemukan dalam radius ${maxDistance} km.`);
-      } else {
-        alert(`Tidak ada jalan ditemukan dalam radius ${maxDistance} km.`);
-      }
-    })
-    .catch(error => {
-      console.error("Gagal mendapatkan data jalan:", error);
-      alert("Terjadi kesalahan saat mencari jalan.");
-    });
+  // Memanggil fungsi fetchRoads untuk mendapatkan data jalan
+  const roadsData = await fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance);
+
+  if (roadsData && roadsData.length > 0) {
+    console.log("Jalan ditemukan:", roadsData);
+    alert(`Jalan ditemukan dalam radius ${maxDistance} km.`);
+    // Anda dapat menambahkan logika untuk menggambar jalan pada peta jika perlu
+  } else {
+    alert(`Tidak ada jalan ditemukan dalam radius ${maxDistance} km.`);
+  }
 }
 
 // Menangani pengiriman form pencarian
