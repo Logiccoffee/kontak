@@ -72,18 +72,18 @@ const regionLayer = new VectorLayer({
 
 // Fungsi untuk mendapatkan data jalan dari API menggunakan metode POST
 async function fetchRoads() {
-    const token = getCookie('login');
+  const token = getCookie('login');
+  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+  const targetUrl = "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads";
+  
   try {
-    const response = await fetch(
-      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Login: token,
-        },
-      }
-    );
+    const response = await fetch(proxyUrl + targetUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Login: token,
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -104,18 +104,18 @@ async function fetchRoads() {
 
 // Fungsi untuk mendapatkan data wilayah dari API menggunakan metode POST
 async function fetchRegion() {
-    const token = getCookie('login');
+  const token = getCookie('login');
+  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+  const targetUrl = "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region";
+  
   try {
-    const response = await fetch(
-      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Login: token,
-        },
-      }
-    );
+    const response = await fetch(proxyUrl + targetUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Login: token,
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -145,9 +145,38 @@ function displayMap() {
   });
 }
 
+// Fungsi untuk mendapatkan cookie (menggunakan token login)
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return "";
+}
+
 // Inisialisasi peta dan data
 window.addEventListener("DOMContentLoaded", () => {
   displayMap();
   fetchRoads();
   fetchRegion();
 });
+
+// Fungsi untuk menangani form pencarian
+document.getElementById("search-form").addEventListener("submit", function (event) {
+  event.preventDefault();
+  
+  const maxDistance = document.getElementById("max-distance").value;
+  const region = document.getElementById("region").value;
+  
+  console.log("Max Distance:", maxDistance);
+  console.log("Region:", region);
+  
+  // Implementasi pencarian berdasarkan jarak dan wilayah
+  searchNearbyLocations(maxDistance, region);
+});
+
+// Fungsi pencarian berdasarkan jarak dan wilayah
+function searchNearbyLocations(maxDistance, region) {
+  // Lakukan pencarian berdasarkan maxDistance dan region
+  console.log("Mencari lokasi dalam jarak:", maxDistance, "km di wilayah:", region);
+  // Implementasikan logika pencarian di sini (misalnya memfilter data jalan atau wilayah)
+}
