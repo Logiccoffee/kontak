@@ -78,11 +78,12 @@ function displayMap() {
   logicCoffeeMarker.setStyle(markerStyle); // Gaya marker
   markerLayer.getSource().addFeature(logicCoffeeMarker);
 
-  // Menangani klik pada peta
+  // Menangani klik pada peta setelah peta diinisialisasi
   map.on("click", (event) => {
     const coords = toLonLat(event.coordinate);
     clickedCoordinates = coords; // Simpan koordinat yang diklik
-    updateMarker(coords);
+    updateMarker(coords); // Memperbarui marker dengan koordinat yang diklik
+    drawLine(coords); // Gambar garis dari marker baru ke Logic Coffee
   });
 }
 
@@ -223,10 +224,3 @@ window.addEventListener("DOMContentLoaded", () => {
   displayMap();
 });
 
-// Menangani klik untuk menambahkan marker dan menggambar garis
-map.on("click", (event) => {
-  const coords = toLonLat(event.coordinate);
-  clickedCoordinates = coords; // Simpan koordinat yang diklik
-  updateMarker(coords); // Tambahkan marker di titik klik
-  drawLine(coords); // Gambar garis dari marker baru ke Logic Coffee
-});
