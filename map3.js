@@ -101,12 +101,11 @@ function drawCircle(coords, radius) {
   circleLayer.getSource().addFeature(circleFeature);
 }
 
-// Fungsi untuk mendapatkan nilai cookie berdasarkan nama
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null; // Jika cookie tidak ditemukan
+// Ambil token dari cookie dengan nama 'login'
+const token = getCookie('login');
+if (!token) {
+  alert('Token tidak ditemukan, harap login terlebih dahulu!');
+  return;
 }
 
 // Fungsi untuk fetch data dari backend menggunakan proxy 
@@ -118,7 +117,7 @@ async function fetchRoads(longitude, latitude, maxDistance) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Login": getCookie('login'),  // Token dari cookie
+        "Login": token,  // Token dari cookie
       },
       body: JSON.stringify({
         long: longitude,
