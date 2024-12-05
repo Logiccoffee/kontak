@@ -98,6 +98,52 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
 }
+
+.search-distance-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin-top: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Lato';
+}
+
+.search-distance-container form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-distance-container label {
+  font-size: 14px;
+  color: #09431f;
+}
+
+.search-distance-container input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-distance-container button {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #09431f;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-distance-container button:hover {
+  background-color: #805700;
+}
+
 @media screen and (max-width: 1024px) {
   .content-container {
     flex-direction: column;
@@ -113,9 +159,33 @@ body {
     width: 50%;
     margin: 20px 0;
     height: 100%;
-  
-    
-    
+  }
+
+  .search-distance-container {
+    padding: 15px;
+    margin: 15px 0;
+  }
+
+  #search-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #max-distance {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  #search-button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+
+  #search-form label {
+    font-size: 1rem;
+    text-align: left;
   }
 }
 
@@ -144,6 +214,19 @@ body {
   .info-box p {
     font-size: 11px;
   }
+
+  #search-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #max-distance {
+    width: 100%;
+  }
+
+  #search-button {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -164,6 +247,20 @@ body {
 
   .info-box p {
     font-size: 11.5px;
+  }
+
+  #search-form label {
+    font-size: 0.9rem;
+  }
+
+  #max-distance {
+    font-size: 0.9rem;
+    padding: 6px;
+  }
+
+  #search-button {
+    font-size: 0.9rem;
+    padding: 6px 12px;
   }
 }
   </style>
@@ -250,6 +347,22 @@ body {
     <div id="map"></div>
 
   </div>
+
+  <div class="search-distance-container">
+    <form id="search-form">
+      <label for="max-distance">Max Distance (km):</label>
+      <input
+        type="number"
+        id="max-distance"
+        name="max-distance"
+        placeholder="Enter distance"
+        min="1"
+        required
+      />
+      <button type="submit" id="search-button">Search</button>
+    </form>
+  </div>
+  
 
     <footer class="site-footer">
         <div class="footer-content">
