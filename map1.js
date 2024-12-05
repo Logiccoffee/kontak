@@ -40,7 +40,7 @@ logicMarker.setStyle(
   })
 );
 
-// Layer marker
+// Layer marker.
 const markerLayer = new VectorLayer({
   source: new VectorSource({
     features: [logicMarker],
