@@ -108,3 +108,70 @@ document.getElementById("search-form").addEventListener("submit", (event) => {
 window.addEventListener("DOMContentLoaded", () => {
   displayMap();
 });
+
+// poligon
+// Poligon data untuk setiap region
+const regions = {
+  bandung: [
+    [
+      [107.572, -6.88],
+      [107.578, -6.88],
+      [107.578, -6.87],
+      [107.572, -6.87],
+      [107.572, -6.88], // kembali ke titik awal
+    ],
+  ],
+  jakarta: [
+    [
+      [106.82, -6.22],
+      [106.83, -6.22],
+      [106.83, -6.21],
+      [106.82, -6.21],
+      [106.82, -6.22], // kembali ke titik awal
+    ],
+  ],
+};
+
+// Layer untuk poligon region
+const regionPolygonLayer = new VectorLayer({
+  source: new VectorSource(),
+  style: new Style({
+    stroke: new Stroke({
+      color: "red",
+      width: 2,
+    }),
+    fill: new Fill({
+      color: "rgba(255, 0, 0, 0.3)",
+    }),
+  }),
+});
+
+// Tambahkan layer poligon ke peta
+map.addLayer(regionPolygonLayer);
+
+// Fungsi untuk menampilkan poligon berdasarkan nama region
+function showRegion(regionName) {
+  const regionCoords = regions[regionName.toLowerCase()];
+  if (regionCoords) {
+    const polygonFeature = new Feature({
+      geometry: new Polygon([regionCoords.map((coord) => fromLonLat(coord))]),
+    });
+
+    // Clear existing features and add the new one
+    regionPolygonLayer.getSource().clear();
+    regionPolygonLayer.getSource().addFeature(polygonFeature);
+
+    // Zoom ke area poligon
+    const extent = polygonFeature.getGeometry().getExtent();
+    mapView.fit(extent, { duration: 1000 });
+  } else {
+    alert(`Region "${regionName}" tidak ditemukan.`);
+  }
+}
+
+// Handle search form submission untuk region
+document.getElementById("region-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const regionInput = document.getElementById("region").value.trim();
+  showRegion(regionInput);
+});
