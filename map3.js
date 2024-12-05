@@ -18,6 +18,7 @@ const logicCoffeeCoords = [107.57504888132391, -6.874693043534695];
 let clickedCoordinates = logicCoffeeCoords; // Default to Logic Coffee
 let map;
 
+// Attributions
 const attributions =
   '<a href="https://petapedia.github.io/" target="_blank">&copy; PetaPedia Indonesia</a>';
 
@@ -110,94 +111,54 @@ function getCookie(name) {
 
 // Fungsi untuk fetch data dari backend menggunakan proxy CORS
 async function fetchRoads(longitude, latitude, maxDistance) {
-    try {
-      // Menggunakan proxy CORS untuk menghindari masalah CORS
-      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // Proxy URL
-      const targetUrl = 'https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads';  // URL target Anda
-      const fullUrl = proxyUrl + targetUrl;  // Gabungkan proxy dengan URL target
-  
-      // Mengirim permintaan ke backend
-      const response = await fetch(fullUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Login": "v4.public.eyJhbGlhcyI6IlNpbmR5IE1hdWxpbmEiLCJleHAiOiIyMDI0LTEyLTA2VDExOjI0OjU5WiIsImlhdCI6IjIwMjQtMTItMDVUMTc6MjQ6NTlaIiwiaWQiOiI2MjgzMTk1ODAwMDIyIiwibmJmIjoiMjAyNC0xMi0wNVQxNzoyNDo1OVoifVy33N_6AaQpI2Igrt7HAxzD2z5D8Z4blvKNmwMrXW4Z6vw9vdNGOAl-wkMfShMeioeW32RS9OHI8Sgb_v6B1gI",  // Token autentikasi Anda
-        },
-        body: JSON.stringify({
-          long: longitude,
-          lat: latitude,
-          max_distance: maxDistance,
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      console.log("Roads fetched:", data);
-      return data;  // Kembalikan data dari backend
-    } catch (error) {
-      console.error("Error fetching roads:", error);
-      return null;  // Jika ada error, kembalikan null
+  try {
+    // Menggunakan proxy CORS untuk menghindari masalah CORS
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // Proxy URL
+    const targetUrl = 'https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads';  // URL target Anda
+    const fullUrl = proxyUrl + targetUrl;  // Gabungkan proxy dengan URL target
+
+    // Mengirim permintaan ke backend
+    const response = await fetch(fullUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Login": getCookie('login'),  // Token dari cookie
+      },
+      body: JSON.stringify({
+        long: longitude,
+        lat: latitude,
+        max_distance: maxDistance,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
+    const data = await response.json();
+    console.log("Roads fetched:", data);
+    return data; // Kembalikan data dari backend
+  } catch (error) {
+    console.error("Error fetching roads:", error);
+    return null; // Jika ada error, kembalikan null
   }
-  
-  // Fungsi untuk menggambar lingkaran pada peta
-  function drawCircle(coords, radius) {
-    const circleFeature = new Feature({
-      geometry: new Circle(fromLonLat(coords), radius * 1000), // Radius dalam meter
-    });
-  
-    // Hapus lingkaran yang ada dan tambahkan lingkaran baru
-    circleLayer.getSource().clear();
-    circleLayer.getSource().addFeature(circleFeature);
+}
+
+// Menangani pengiriman form pencarian
+document.getElementById("search-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const maxDistance = parseFloat(document.getElementById("max-distance").value);
+  if (isNaN(maxDistance) || maxDistance <= 0) {
+    alert("Masukkan jarak yang valid dalam kilometer.");
+    return;
   }
-  
-  // Menangani pengiriman form pencarian
-  document.getElementById("search-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const maxDistance = parseFloat(document.getElementById("max-distance").value);
-    if (isNaN(maxDistance) || maxDistance <= 0) {
-      alert("Masukkan jarak yang valid dalam kilometer.");
-      return;
-    }
-    if (clickedCoordinates) {
-      drawCircle(clickedCoordinates, maxDistance);  // Gambar lingkaran pada peta
-      fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance);  // Panggil fungsi untuk mencari jalan
-    }
-  });
-  
-  // Fungsi untuk menampilkan peta
-  function displayMap() {
-    map = new Map({
-      target: "map",
-      layers: [basemap, markerLayer, circleLayer],
-      view: mapView,
-    });
-  
-    // Menangani klik pada peta
-    map.on("click", (event) => {
-      const coords = toLonLat(event.coordinate);
-      clickedCoordinates = coords; // Simpan koordinat yang diklik
-      updateMarker(coords);
-    });
+  if (clickedCoordinates) {
+    drawCircle(clickedCoordinates, maxDistance);  // Gambar lingkaran pada peta
+    fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance);  // Panggil fungsi untuk mencari jalan
   }
-  
-  // Fungsi untuk menambahkan atau memperbarui marker
-  function updateMarker(coords) {
-    const marker = new Feature({
-      geometry: new Point(fromLonLat(coords)),
-    });
-    marker.setStyle(markerStyle);
-  
-    // Hapus marker yang ada dan tambahkan marker baru
-    markerLayer.getSource().clear();
-    markerLayer.getSource().addFeature(marker);
-  }
-  
-  // Menampilkan peta saat halaman selesai dimuat
-  window.addEventListener("DOMContentLoaded", () => {
-    displayMap();
-  });
-  
+});
+
+// Menampilkan peta saat halaman selesai dimuat
+window.addEventListener("DOMContentLoaded", () => {
+  displayMap();
+});
