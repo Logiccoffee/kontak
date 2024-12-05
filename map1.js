@@ -73,11 +73,10 @@ const regionLayer = new VectorLayer({
 // Fungsi untuk mendapatkan data jalan dari API menggunakan metode POST
 async function fetchRoads() {
   const token = getCookie('login');
-  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
   const targetUrl = "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads";
   
   try {
-    const response = await fetch(proxyUrl + targetUrl, {
+    const response = await fetch(targetUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
