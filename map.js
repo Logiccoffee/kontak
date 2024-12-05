@@ -6,82 +6,57 @@ import { fromLonLat } from "https://cdn.skypack.dev/ol/proj.js";
 import VectorLayer from "https://cdn.skypack.dev/ol/layer/Vector.js";
 import VectorSource from "https://cdn.skypack.dev/ol/source/Vector.js";
 import Feature from "https://cdn.skypack.dev/ol/Feature.js";
-import Polygon from "https://cdn.skypack.dev/ol/geom/Polygon.js";
+import Point from "https://cdn.skypack.dev/ol/geom/Point.js";
 import Style from "https://cdn.skypack.dev/ol/style/Style.js";
-import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
-import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
+import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
+
+const attributions =
+  '<a href="https://petapedia.github.io/" target="_blank">&copy; PetaPedia Indonesia</a>';
 
 const logicCoffeeCoords = [107.57504888132391, -6.874693043534695]; // Longitude, Latitude
 
 // Basemap layer
 const basemap = new TileLayer({
-  source: new OSM(),
+  source: new OSM({ attributions: attributions }),
 });
 
 // Map view
 const defaultstartmap = new View({
   center: fromLonLat(logicCoffeeCoords),
-  zoom: 13,
+  zoom: 18,
 });
 
-// Region Layer
-const regionLayer = new VectorLayer({
-  source: new VectorSource(),
-  style: new Style({
-    stroke: new Stroke({
-      color: "blue",
-      width: 3,
+// Marker feature
+const marker = new Feature({
+  geometry: new Point(fromLonLat(logicCoffeeCoords)),
+});
+
+// Marker style
+marker.setStyle(
+  new Style({
+    image: new Icon({
+      src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+      scale: 0.07,
     }),
-    fill: new Fill({
-      color: "rgba(0, 0, 255, 0.1)",
-    }),
+  })
+);
+
+// Marker layer
+const markerLayer = new VectorLayer({
+  source: new VectorSource({
+    features: [marker],
   }),
 });
 
-// Map initialization
+// Display map function
 function displayMap() {
   const map = new Map({
     target: "map",
-    layers: [basemap, regionLayer],
+    layers: [basemap, markerLayer],
     view: defaultstartmap,
   });
-
-  return map;
 }
 
-// Regions data
-const regions = {
-  Bandung: [
-    [107.55, -6.85],
-    [107.65, -6.85],
-    [107.65, -6.90],
-    [107.55, -6.90],
-    [107.55, -6.85],
-  ],
-};
-
-// Function to draw region
-function drawRegion(regionName) {
-  const coordinates = regions[regionName];
-  if (coordinates) {
-    const polygon = new Polygon([coordinates.map(fromLonLat)]);
-    const regionFeature = new Feature({ geometry: polygon });
-    regionLayer.getSource().clear(); // Clear previous features
-    regionLayer.getSource().addFeature(regionFeature);
-    alert(`Region ${regionName} has been displayed.`);
-  } else {
-    alert(`Region ${regionName} not found.`);
-  }
-}
-
-// Add event listener for the search form
 window.addEventListener("DOMContentLoaded", () => {
-  const map = displayMap();
-
-  const searchForm = document.getElementById("search-form");
-  searchForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const regionName = document.getElementById("region").value.trim();
-    drawRegion(regionName);
-  });
+  displayMap();
 });
