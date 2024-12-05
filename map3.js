@@ -96,7 +96,6 @@ const lineLayer = new VectorLayer({
     }),
   }),
 });
-map.addLayer(lineLayer); // Menambahkan layer garis ke peta
 
 // Fungsi untuk menggambar garis dari koordinat pengguna ke Logic Coffee
 function drawLine(userCoords) {
