@@ -208,6 +208,29 @@ document.getElementById("search-form").addEventListener("submit", (event) => {
   }
 });
 
+// Menangani pengiriman form pencarian
+document.getElementById("search-titik-pengguna").addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  // Ambil nilai input pengguna untuk latitude dan longitude
+  const latitude = parseFloat(document.getElementById("latitude").value);
+  const longitude = parseFloat(document.getElementById("longitude").value);
+
+  // Validasi input
+  if (isNaN(latitude) || isNaN(longitude)) {
+    alert("Masukkan latitude dan longitude yang valid.");
+    return;
+  }
+
+  const userCoords = [longitude, latitude]; // Koordinat dari form input
+
+  // Menambahkan marker di titik pengguna
+  updateMarker(userCoords);
+
+  // Gambar garis dari titik pengguna ke Logic Coffee
+  drawLine(userCoords);
+});
+
 // Menampilkan peta saat halaman selesai dimuat
 window.addEventListener("DOMContentLoaded", () => {
   displayMap();
