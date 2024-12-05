@@ -108,21 +108,20 @@ function getCookie(name) {
   return null; // Jika cookie tidak ditemukan
 }
 
-// Fungsi untuk fetch data dari backend
+// Fungsi untuk fetch data dari backend menggunakan proxy CORS
 async function fetchRoads(longitude, latitude, maxDistance) {
-    const token = getCookie("login"); // Ambil token dari cookie
-  
-    if (!token) {
-      alert("Token tidak ditemukan, silakan login.");
-      return;
-    }
-  
     try {
-      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
+      // Menggunakan proxy CORS untuk menghindari masalah CORS
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // Proxy URL
+      const targetUrl = 'https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads';  // URL target Anda
+      const fullUrl = proxyUrl + targetUrl;  // Gabungkan proxy dengan URL target
+  
+      // Mengirim permintaan ke backend
+      const response = await fetch(fullUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Login": token, // Kirim token di header Login
+          "Login": "v4.public.eyJhbGlhcyI6IlNpbmR5IE1hdWxpbmEiLCJleHAiOiIyMDI0LTEyLTA2VDExOjI0OjU5WiIsImlhdCI6IjIwMjQtMTItMDVUMTc6MjQ6NTlaIiwiaWQiOiI2MjgzMTk1ODAwMDIyIiwibmJmIjoiMjAyNC0xMi0wNVQxNzoyNDo1OVoifVy33N_6AaQpI2Igrt7HAxzD2z5D8Z4blvKNmwMrXW4Z6vw9vdNGOAl-wkMfShMeioeW32RS9OHI8Sgb_v6B1gI",  // Token autentikasi Anda
         },
         body: JSON.stringify({
           long: longitude,
@@ -137,41 +136,12 @@ async function fetchRoads(longitude, latitude, maxDistance) {
   
       const data = await response.json();
       console.log("Roads fetched:", data);
-      return data; // Data dari backend
+      return data;  // Kembalikan data dari backend
     } catch (error) {
       console.error("Error fetching roads:", error);
-      alert("Terjadi kesalahan saat mencari jalan.");
-      return null;
+      return null;  // Jika ada error, kembalikan null
     }
   }
-  
-  // Fungsi untuk mendapatkan nilai cookie berdasarkan nama
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null; // Jika cookie tidak ditemukan
-  }
-  
-  // Fungsi untuk menangani pengiriman form pencarian
-  document.getElementById("search-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const maxDistance = parseFloat(document.getElementById("max-distance").value);
-    if (isNaN(maxDistance) || maxDistance <= 0) {
-      alert("Masukkan jarak yang valid dalam kilometer.");
-      return;
-    }
-  
-    if (clickedCoordinates) {
-      drawCircle(clickedCoordinates, maxDistance); // Gambar lingkaran pada peta
-      const roads = await fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance); // Panggil fungsi untuk mencari jalan
-      if (roads && roads.length > 0) {
-        alert(`Jalan ditemukan dalam radius ${maxDistance} km.`);
-      } else {
-        alert(`Tidak ada jalan ditemukan dalam radius ${maxDistance} km.`);
-      }
-    }
-  });
   
   // Fungsi untuk menggambar lingkaran pada peta
   function drawCircle(coords, radius) {
@@ -183,4 +153,51 @@ async function fetchRoads(longitude, latitude, maxDistance) {
     circleLayer.getSource().clear();
     circleLayer.getSource().addFeature(circleFeature);
   }
+  
+  // Menangani pengiriman form pencarian
+  document.getElementById("search-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const maxDistance = parseFloat(document.getElementById("max-distance").value);
+    if (isNaN(maxDistance) || maxDistance <= 0) {
+      alert("Masukkan jarak yang valid dalam kilometer.");
+      return;
+    }
+    if (clickedCoordinates) {
+      drawCircle(clickedCoordinates, maxDistance);  // Gambar lingkaran pada peta
+      fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance);  // Panggil fungsi untuk mencari jalan
+    }
+  });
+  
+  // Fungsi untuk menampilkan peta
+  function displayMap() {
+    map = new Map({
+      target: "map",
+      layers: [basemap, markerLayer, circleLayer],
+      view: mapView,
+    });
+  
+    // Menangani klik pada peta
+    map.on("click", (event) => {
+      const coords = toLonLat(event.coordinate);
+      clickedCoordinates = coords; // Simpan koordinat yang diklik
+      updateMarker(coords);
+    });
+  }
+  
+  // Fungsi untuk menambahkan atau memperbarui marker
+  function updateMarker(coords) {
+    const marker = new Feature({
+      geometry: new Point(fromLonLat(coords)),
+    });
+    marker.setStyle(markerStyle);
+  
+    // Hapus marker yang ada dan tambahkan marker baru
+    markerLayer.getSource().clear();
+    markerLayer.getSource().addFeature(marker);
+  }
+  
+  // Menampilkan peta saat halaman selesai dimuat
+  window.addEventListener("DOMContentLoaded", () => {
+    displayMap();
+  });
   
