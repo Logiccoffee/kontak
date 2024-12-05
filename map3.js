@@ -112,7 +112,9 @@ function getCookie(name) {
 // Fungsi untuk fetch data dari backend menggunakan proxy 
 async function fetchRoads(longitude, latitude, maxDistance) {
   try {
-    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
+    console.log("Fetching roads with params:", { longitude, latitude, maxDistance });
+
+    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
