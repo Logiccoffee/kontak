@@ -111,14 +111,11 @@ function getCookie(name) {
 
 // Fungsi untuk fetch data dari backend menggunakan proxy CORS
 async function fetchRoads(longitude, latitude, maxDistance) {
-  try {
-    // Menggunakan proxy CORS untuk menghindari masalah CORS
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';  // Proxy URL
-    const targetUrl = 'https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads';  // URL target Anda
-    const fullUrl = proxyUrl + targetUrl;  // Gabungkan proxy dengan URL target
+    try {
+      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
 
     // Mengirim permintaan ke backend
-    const response = await fetch(fullUrl, {
+   
       method: "POST",
       headers: {
         "Content-Type": "application/json",
