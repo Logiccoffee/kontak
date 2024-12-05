@@ -78,6 +78,40 @@ function displayMap() {
   });
 }
 
+// Layer untuk garis
+const lineLayer = new VectorLayer({
+  source: new VectorSource(),
+  style: new Style({
+    stroke: new Stroke({
+      color: 'red', // Warna garis
+      width: 2, // Lebar garis
+    }),
+  }),
+});
+map.addLayer(lineLayer); // Menambahkan layer garis ke peta
+
+// Fungsi untuk menggambar garis dari koordinat pengguna ke Logic Coffee
+function drawLine(userCoords) {
+  const lineFeature = new Feature({
+    geometry: new LineString([fromLonLat(userCoords), fromLonLat(logicCoffeeCoords)]),
+  });
+
+  // Menambahkan garis ke layer
+  lineLayer.getSource().clear(); // Hapus garis yang lama
+  lineLayer.getSource().addFeature(lineFeature);
+}
+
+// Menangani klik untuk menambahkan marker dan menggambar garis
+map.on('click', (event) => {
+  const coords = toLonLat(event.coordinate);
+  clickedCoordinates = coords; // Simpan koordinat yang diklik
+  updateMarker(coords); // Tambahkan marker di titik klik
+
+  // Gambar garis dari marker baru ke Logic Coffee
+  drawLine(coords);
+});
+
+
 // Fungsi untuk menambahkan atau memperbarui marker
 function updateMarker(coords) {
   const marker = new Feature({
@@ -115,6 +149,15 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
   return null; // Jika cookie tidak ditemukan, kembalikan null
 }
+
+// Menambahkan marker di Logic Coffee
+const logicCoffeeMarker = new Feature({
+  geometry: new Point(fromLonLat(logicCoffeeCoords)),
+});
+logicCoffeeMarker.setStyle(markerStyle); // Gaya marker
+
+// Menambahkan marker ke layer
+markerLayer.getSource().addFeature(logicCoffeeMarker);
 
 
 // Fungsi untuk fetch data dari backend menggunakan proxy 
@@ -171,4 +214,12 @@ document.getElementById("search-form").addEventListener("submit", (event) => {
 // Menampilkan peta saat halaman selesai dimuat
 window.addEventListener("DOMContentLoaded", () => {
   displayMap();
+});
+
+// Menangani klik untuk menambahkan marker dan menggambar garis
+map.on("click", (event) => {
+  const coords = toLonLat(event.coordinate);
+  clickedCoordinates = coords; // Simpan koordinat yang diklik
+  updateMarker(coords); // Tambahkan marker di titik klik
+  drawLine(coords); // Gambar garis dari marker baru ke Logic Coffee
 });
