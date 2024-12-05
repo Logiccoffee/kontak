@@ -105,7 +105,7 @@ function drawCircle(coords, radius) {
 const token = getCookie('login');
 if (!token) {
   alert('Token tidak ditemukan, harap login terlebih dahulu!');
-  return;
+  throw new Error('Token tidak ditemukan');  // Hentikan eksekusi jika token tidak ada
 }
 
 // Fungsi untuk fetch data dari backend menggunakan proxy 
