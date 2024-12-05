@@ -12,6 +12,7 @@ import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
 import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
+import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js";
 
 const attributions =
   '<a href="https://petapedia.github.io/" target="_blank">&copy; PetaPedia Indonesia</a>';
@@ -45,6 +46,17 @@ const markerStyle = new Style({
 // Marker layer
 const markerLayer = new VectorLayer({
   source: new VectorSource(),
+});
+
+// Garis layer untuk menghubungkan titik marker ke tepian lingkaran
+const lineLayer = new VectorLayer({
+  source: new VectorSource(),
+  style: new Style({
+    stroke: new Stroke({
+      color: "blue", // Warna garis
+      width: 2,
+    }),
+  }),
 });
 
 // Circle layer for radius visualization
@@ -92,15 +104,59 @@ function updateMarker(coords) {
 // Draw circle on map
 function drawCircle(coords, radius) {
   const circleFeature = new Feature({
-    geometry: new Circle(fromLonLat(coords), radius * 1000), // Radius in meters
+    geometry: new Circle(fromLonLat(coords), radius * 1000), // Radius dalam meter
   });
 
-  // Clear existing circle and add new one
+  // Clear existing circle and line
   circleLayer.getSource().clear();
+  lineLayer.getSource().clear();
+
+  // Tambahkan lingkaran ke layer
   circleLayer.getSource().addFeature(circleFeature);
+
+  // Buat garis dari marker ke tepian lingkaran
+  const edgeCoords = [coords[0], coords[1] + (radius / 111)]; // Radius 1 derajat ~ 111 km
+  const lineFeature = new Feature({
+    geometry: new LineString([
+      fromLonLat(coords),
+      fromLonLat(edgeCoords),
+    ]),
+  });
+
+  lineLayer.getSource().addFeature(lineFeature);
 }
 
-// Handle search form submission
+// Tampilkan Lat dan Lon di Alert
+function updateMarker(coords) {
+  const marker = new Feature({
+    geometry: new Point(fromLonLat(coords)),
+  });
+  marker.setStyle(markerStyle);
+
+  // Clear existing marker dan tambahkan yang baru
+  markerLayer.getSource().clear();
+  markerLayer.getSource().addFeature(marker);
+
+  alert(`Koordinat yang diklik:\nLatitude: ${coords[1].toFixed(6)}, Longitude: ${coords[0].toFixed(6)}`);
+}
+
+// Tampilkan peta
+function displayMap() {
+  map = new Map({
+    target: "map",
+    layers: [basemap, markerLayer, circleLayer, lineLayer], // Tambahkan lineLayer ke dalam peta
+    view: mapView,
+  });
+
+  // Handle map click
+  map.on("click", (event) => {
+    const coords = toLonLat(event.coordinate);
+    clickedCoordinates = coords; // Simpan koordinat yang diklik
+    updateMarker(coords); // Tampilkan marker
+  });
+}
+
+// Handle form search untuk menggambar lingkaran dan garis
 document.getElementById("search-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const maxDistance = parseFloat(document.getElementById("max-distance").value);
