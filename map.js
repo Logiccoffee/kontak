@@ -2,7 +2,7 @@ import Map from "https://cdn.skypack.dev/ol/Map.js";
 import View from "https://cdn.skypack.dev/ol/View.js";
 import TileLayer from "https://cdn.skypack.dev/ol/layer/Tile.js";
 import OSM from "https://cdn.skypack.dev/ol/source/OSM.js";
-import { fromLonLat } from "https://cdn.skypack.dev/ol/proj.js";
+import { fromLonLat, toLonLat } from "https://cdn.skypack.dev/ol/proj.js";
 import VectorLayer from "https://cdn.skypack.dev/ol/layer/Vector.js";
 import VectorSource from "https://cdn.skypack.dev/ol/source/Vector.js";
 import Feature from "https://cdn.skypack.dev/ol/Feature.js";
@@ -22,7 +22,9 @@ let map;
 
 // Basemap layer
 const basemap = new TileLayer({
-  source: new OSM(),
+  source: new OSM({
+    attributions: attributions,
+  }),
 });
 
 // Map view
@@ -102,9 +104,13 @@ function drawCircle(coords, radius) {
 document.getElementById("search-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const maxDistance = parseFloat(document.getElementById("max-distance").value);
-  if (!isNaN(maxDistance) && clickedCoordinates) {
+  if (isNaN(maxDistance) || maxDistance <= 0) {
+    alert("Masukkan jarak yang valid dalam kilometer.");
+    return;
+  }
+  if (clickedCoordinates) {
     drawCircle(clickedCoordinates, maxDistance);
-    alert(`Radius of ${maxDistance} km applied at ${clickedCoordinates}`);
+    alert(`Radius ${maxDistance} km diterapkan pada koordinat ${clickedCoordinates}`);
   }
 });
 
