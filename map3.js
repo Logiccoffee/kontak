@@ -12,6 +12,7 @@ import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
 import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
+import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js"; // Pastikan ini diimport
 
 // Koordinat Logic Coffee (default)
 const logicCoffeeCoords = [107.57504888132391, -6.874693043534695];
@@ -69,6 +70,13 @@ function displayMap() {
     layers: [basemap, markerLayer, circleLayer],
     view: mapView,
   });
+
+  // Menambahkan marker di Logic Coffee
+  const logicCoffeeMarker = new Feature({
+    geometry: new Point(fromLonLat(logicCoffeeCoords)),
+  });
+  logicCoffeeMarker.setStyle(markerStyle); // Gaya marker
+  markerLayer.getSource().addFeature(logicCoffeeMarker);
 
   // Menangani klik pada peta
   map.on("click", (event) => {
