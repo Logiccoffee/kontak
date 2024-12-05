@@ -83,8 +83,8 @@ async function fetchRoads() {
         "Login": token,
       },
       body: JSON.stringify({
-        // Misalnya, tambahkan parameter yang diperlukan API
-        query: "example",  // Ganti dengan parameter yang dibutuhkan API
+        // Sesuaikan dengan parameter yang diharapkan API
+        region: "Bandung",  // Contoh, ganti dengan parameter yang diperlukan
       }),
     });
 
@@ -124,18 +124,33 @@ async function fetchRegion() {
     }
 
     const data = await response.json();
-    data.forEach((region) => {
-      const coordinates = region.coordinates.map((ring) =>
-        ring.map((coord) => fromLonLat(coord))
-      );
-      const regionFeature = new Feature({
-        geometry: new Polygon(coordinates),
+    // Pastikan data valid
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach((region) => {
+        if (region.coordinates && Array.isArray(region.coordinates)) {
+          const coordinates = region.coordinates.map((ring) =>
+            ring.map((coord) => fromLonLat(coord))
+          );
+          const regionFeature = new Feature({
+            geometry: new Polygon(coordinates),
+          });
+          regionLayer.getSource().addFeature(regionFeature);
+        }
       });
-      regionLayer.getSource().addFeature(regionFeature);
-    });
+    } else {
+      console.error("Data wilayah tidak valid:", data);
+    }
   } catch (error) {
     console.error("Gagal mendapatkan data wilayah:", error);
   }
+}
+
+// Fungsi untuk mendapatkan nilai cookie berdasarkan nama
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null; // Jika cookie tidak ditemukan
 }
 
 // Fungsi untuk menampilkan peta
