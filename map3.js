@@ -108,6 +108,15 @@ if (!token) {
   throw new Error('Token tidak ditemukan');  // Hentikan eksekusi jika token tidak ada
 }
 
+// Fungsi untuk mengambil nilai cookie berdasarkan nama
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null; // Jika cookie tidak ditemukan, kembalikan null
+}
+
+
 // Fungsi untuk fetch data dari backend menggunakan proxy 
 async function fetchRoads(longitude, latitude, maxDistance) {
   try {
