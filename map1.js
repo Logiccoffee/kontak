@@ -80,8 +80,12 @@ async function fetchRoads() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Login: token,
+        "Login": token,
       },
+      body: JSON.stringify({
+        // Misalnya, tambahkan parameter yang diperlukan API
+        query: "example",  // Ganti dengan parameter yang dibutuhkan API
+      }),
     });
 
     if (!response.ok) {
@@ -111,7 +115,7 @@ async function fetchRegion() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Login: token,
+        "Login": token,
       },
     });
 
