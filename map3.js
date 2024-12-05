@@ -109,13 +109,10 @@ function getCookie(name) {
   return null; // Jika cookie tidak ditemukan
 }
 
-// Fungsi untuk fetch data dari backend menggunakan proxy CORS
+// Fungsi untuk fetch data dari backend menggunakan proxy 
 async function fetchRoads(longitude, latitude, maxDistance) {
-    try {
-      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
-
-    // Mengirim permintaan ke backend
-   
+  try {
+    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -151,7 +148,13 @@ document.getElementById("search-form").addEventListener("submit", (event) => {
   }
   if (clickedCoordinates) {
     drawCircle(clickedCoordinates, maxDistance);  // Gambar lingkaran pada peta
-    fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance);  // Panggil fungsi untuk mencari jalan
+    fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance)  // Panggil fungsi untuk mencari jalan
+      .then((roads) => {
+        if (roads) {
+          console.log("Data jalan terambil:", roads);
+          // Lakukan sesuatu dengan data jalan yang diterima, seperti menampilkan pada peta atau UI
+        }
+      });
   }
 });
 
