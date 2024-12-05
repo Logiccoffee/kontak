@@ -70,12 +70,25 @@ const regionLayer = new VectorLayer({
   }),
 });
 
-// Fungsi untuk mendapatkan data jalan dari API
+// Fungsi untuk mendapatkan data jalan dari API menggunakan metode POST
 async function fetchRoads() {
+    const token = getCookie('login');
   try {
     const response = await fetch(
-      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads"
+      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Login: token,
+        },
+      }
     );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const data = await response.json();
     data.forEach((road) => {
       const coordinates = road.coordinates.map((coord) => fromLonLat(coord));
@@ -89,12 +102,25 @@ async function fetchRoads() {
   }
 }
 
-// Fungsi untuk mendapatkan data wilayah dari API
+// Fungsi untuk mendapatkan data wilayah dari API menggunakan metode POST
 async function fetchRegion() {
+    const token = getCookie('login');
   try {
     const response = await fetch(
-      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region"
+      "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Login: token,
+        },
+      }
     );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
     const data = await response.json();
     data.forEach((region) => {
       const coordinates = region.coordinates.map((ring) =>
