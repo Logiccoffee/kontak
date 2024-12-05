@@ -7,70 +7,83 @@ import VectorLayer from "https://cdn.skypack.dev/ol/layer/Vector.js";
 import VectorSource from "https://cdn.skypack.dev/ol/source/Vector.js";
 import Feature from "https://cdn.skypack.dev/ol/Feature.js";
 import Point from "https://cdn.skypack.dev/ol/geom/Point.js";
+import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js";
 import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
-import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
-import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js";
 
-// Logic Coffee coordinates
-const logicCoffeeCoords = [107.57504888132391, -6.874693043534695];
+// Koordinat Logic Coffee
+const logicCoffeeCoords = [107.57504888132391, -6.874693043534695]; // Longitude, Latitude
+let userCoords = null; // Koordinat pengguna
 
-// Base map layer
+// Layer peta dasar
 const basemap = new TileLayer({
   source: new OSM(),
 });
 
-// Map view
+// View peta
 const mapView = new View({
   center: fromLonLat(logicCoffeeCoords),
-  zoom: 18,
+  zoom: 14,
 });
 
-// Styles
-const markerStyle = new Style({
-  image: new Icon({
-    src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-    scale: 0.07,
+// Marker untuk Logic Coffee
+const logicMarker = new Feature({
+  geometry: new Point(fromLonLat(logicCoffeeCoords)),
+});
+logicMarker.setStyle(
+  new Style({
+    image: new Icon({
+      src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+      scale: 0.07,
+    }),
+  })
+);
+
+// Layer marker
+const markerLayer = new VectorLayer({
+  source: new VectorSource({
+    features: [logicMarker],
   }),
 });
 
-const routeStyle = new Style({
-  stroke: new Stroke({
-    color: "red",
-    width: 3,
+// Layer rute
+const routeLayer = new VectorLayer({
+  source: new VectorSource(),
+  style: new Style({
+    stroke: new Stroke({
+      color: "blue",
+      width: 3,
+    }),
   }),
 });
 
-// Map and layers
-const markerLayer = new VectorLayer({ source: new VectorSource() });
-const routeLayer = new VectorLayer({ source: new VectorSource(), style: routeStyle });
-
+// Inisialisasi peta
 const map = new Map({
   target: "map",
   layers: [basemap, markerLayer, routeLayer],
   view: mapView,
 });
 
-// Add a marker for Logic Coffee
-const addMarker = (coords) => {
-  const marker = new Feature({ geometry: new Point(fromLonLat(coords)) });
-  marker.setStyle(markerStyle);
-  markerLayer.getSource().addFeature(marker);
-};
-
-// Draw a route between two points
-const drawRoute = (start, end) => {
-  const routeFeature = new Feature({
-    geometry: new LineString([fromLonLat(start), fromLonLat(end)]),
+// Fungsi untuk menggambar rute
+function drawRoute(startCoords, endCoords) {
+  const route = new Feature({
+    geometry: new LineString([fromLonLat(startCoords), fromLonLat(endCoords)]),
   });
-  routeLayer.getSource().clear();
-  routeLayer.getSource().addFeature(routeFeature);
-};
 
-// Get user coordinates via region input
-const getCoordinates = async (region) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(region)}&format=json&limit=1`;
+  routeLayer.getSource().clear();
+  routeLayer.getSource().addFeature(route);
+
+  // Zoom ke rute
+  mapView.fit(route.getGeometry(), { padding: [50, 50, 50, 50] });
+}
+
+// Fungsi untuk mendapatkan koordinat dari wilayah
+async function getCoordinates(region) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+    region
+  )}&format=json&limit=1`;
+
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -78,55 +91,56 @@ const getCoordinates = async (region) => {
       alert("Region tidak ditemukan. Silakan coba nama lain.");
       return null;
     }
-    return [parseFloat(data[0].lon), parseFloat(data[0].lat)];
+
+    const { lat, lon } = data[0];
+    return [parseFloat(lon), parseFloat(lat)];
   } catch (error) {
+    alert("Terjadi kesalahan saat mencari wilayah. Silakan coba lagi.");
     console.error(error);
-    alert("Gagal mendapatkan koordinat.");
     return null;
   }
-};
+}
 
-// Max Distance form submission
-document.getElementById("max-distance-form").addEventListener("submit", (event) => {
+// Event listener untuk form jarak
+document.getElementById("max-distance").closest("form").addEventListener("submit", (event) => {
   event.preventDefault();
+
   const maxDistance = parseFloat(document.getElementById("max-distance").value);
   if (isNaN(maxDistance) || maxDistance <= 0) {
-    alert("Masukkan jarak valid (km).");
+    alert("Masukkan jarak yang valid dalam kilometer.");
     return;
   }
 
-  // Add circle around Logic Coffee (optional visual guide)
-  alert(`Menampilkan lokasi dalam radius ${maxDistance} km dari Logic Coffee belum tersedia.`);
+  if (!userCoords) {
+    alert("Klik pada peta untuk menentukan lokasi pengguna.");
+    return;
+  }
+
+  // Menggambar rute jika jarak valid
+  drawRoute(userCoords, logicCoffeeCoords);
+  alert(`Rute sejauh ${maxDistance} km dari lokasi Anda ke Logic Coffee telah ditampilkan.`);
 });
 
-// Region form submission
-document.getElementById("region-form").addEventListener("submit", async (event) => {
+// Event listener untuk form region
+document.getElementById("region").closest("form").addEventListener("submit", async (event) => {
   event.preventDefault();
+
   const region = document.getElementById("region").value;
   if (!region) {
     alert("Masukkan nama wilayah yang valid.");
     return;
   }
 
-  const userCoords = await getCoordinates(region);
-  if (!userCoords) return;
-
-  // Add user marker
-  const userMarker = new Feature({ geometry: new Point(fromLonLat(userCoords)) });
-  userMarker.setStyle(markerStyle);
-  markerLayer.getSource().clear(); // Clear previous markers
-  markerLayer.getSource().addFeature(userMarker);
-
-  // Draw route to Logic Coffee
-  drawRoute(userCoords, logicCoffeeCoords);
-
-  // Zoom to fit both markers
-  mapView.fit(new LineString([fromLonLat(userCoords), fromLonLat(logicCoffeeCoords)]).getExtent(), {
-    padding: [50, 50, 50, 50],
-  });
-
-  alert(`Rute ditampilkan dari "${region}" ke Logic Coffee.`);
+  const regionCoords = await getCoordinates(region);
+  if (regionCoords) {
+    // Menggambar rute dari wilayah ke Logic Coffee
+    drawRoute(regionCoords, logicCoffeeCoords);
+    alert(`Rute dari "${region}" ke Logic Coffee telah ditampilkan.`);
+  }
 });
 
-// Initialize map with Logic Coffee marker
-addMarker(logicCoffeeCoords);
+// Event listener untuk klik peta (menentukan lokasi pengguna)
+map.on("click", (event) => {
+  userCoords = toLonLat(event.coordinate);
+  alert(`Lokasi pengguna telah ditentukan: ${userCoords}`);
+});
