@@ -104,11 +104,10 @@ async function fetchRoads() {
 // Fungsi untuk mendapatkan data wilayah dari API menggunakan metode POST
 async function fetchRegion() {
   const token = getCookie('login');
-  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
   const targetUrl = "https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/region";
   
   try {
-    const response = await fetch(proxyUrl + targetUrl, {
+    const response = await fetch(targetUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
