@@ -100,9 +100,23 @@ function drawCircle(coords, radius) {
   circleLayer.getSource().addFeature(circleFeature);
 }
 
+// Fungsi untuk mendapatkan nilai cookie berdasarkan nama
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null; // Jika cookie tidak ditemukan
+}
+
 // Fungsi untuk mengirimkan permintaan ke backend
 function searchRoads(maxDistance) {
   const token = getCookie("login"); // Ambil token dari cookie
+
+  // Periksa apakah token tersedia
+  if (!token) {
+    alert("Token tidak ditemukan, silakan login.");
+    return;
+  }
 
   fetch("https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads", {
     method: "POST",
@@ -116,7 +130,12 @@ function searchRoads(maxDistance) {
       maxDistance: maxDistance, // Jarak maksimal (dalam kilometer)
     }),
   })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Gagal mendapatkan data dari server.");
+      }
+      return response.json();
+    })
     .then(data => {
       if (data && data.length > 0) {
         console.log("Jalan ditemukan:", data);
