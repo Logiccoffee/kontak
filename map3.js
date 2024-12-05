@@ -110,71 +110,77 @@ function getCookie(name) {
 
 // Fungsi untuk fetch data dari backend
 async function fetchRoads(longitude, latitude, maxDistance) {
-  try {
-    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Login: "v4.public.eyJhbGlhcyI6IlNpbmR5IE1hdWxpbmEiLCJleHAiOiIyMDI0LTEyLTA2VDExOjI0OjU5WiIsImlhdCI6IjIwMjQtMTItMDVUMTc6MjQ6NTlaIiwiaWQiOiI2MjgzMTk1ODAwMDIyIiwibmJmIjoiMjAyNC0xMi0wNVQxNzoyNDo1OVoifVy33N_6AaQpI2Igrt7HAxzD2z5D8Z4blvKNmwMrXW4Z6vw9vdNGOAl-wkMfShMeioeW32RS9OHI8Sgb_v6B1gI"
-
-      },
-      body: JSON.stringify({
-        long: longitude,
-        lat: latitude,
-        max_distance: maxDistance,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    const token = getCookie("login"); // Ambil token dari cookie
+  
+    if (!token) {
+      alert("Token tidak ditemukan, silakan login.");
+      return;
     }
-
-    const data = await response.json();
-    console.log("Roads fetched:", data);
-    return data; // Data dari backend
-  } catch (error) {
-    console.error("Error fetching roads:", error);
-    return null;
+  
+    try {
+      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/jualin/data/get/roads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Login": token, // Kirim token di header Login
+        },
+        body: JSON.stringify({
+          long: longitude,
+          lat: latitude,
+          max_distance: maxDistance,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Roads fetched:", data);
+      return data; // Data dari backend
+    } catch (error) {
+      console.error("Error fetching roads:", error);
+      alert("Terjadi kesalahan saat mencari jalan.");
+      return null;
+    }
   }
-}
-
-// Fungsi untuk mencari jalan dan menampilkannya
-async function searchRoads(maxDistance) {
-  const token = getCookie("login"); // Ambil token dari cookie
-
-  // Periksa apakah token tersedia
-  if (!token) {
-    alert("Token tidak ditemukan, silakan login.");
-    return;
+  
+  // Fungsi untuk mendapatkan nilai cookie berdasarkan nama
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null; // Jika cookie tidak ditemukan
   }
-
-  // Memanggil fungsi fetchRoads untuk mendapatkan data jalan
-  const roadsData = await fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance);
-
-  if (roadsData && roadsData.length > 0) {
-    console.log("Jalan ditemukan:", roadsData);
-    alert(`Jalan ditemukan dalam radius ${maxDistance} km.`);
-    // Anda dapat menambahkan logika untuk menggambar jalan pada peta jika perlu
-  } else {
-    alert(`Tidak ada jalan ditemukan dalam radius ${maxDistance} km.`);
+  
+  // Fungsi untuk menangani pengiriman form pencarian
+  document.getElementById("search-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const maxDistance = parseFloat(document.getElementById("max-distance").value);
+    if (isNaN(maxDistance) || maxDistance <= 0) {
+      alert("Masukkan jarak yang valid dalam kilometer.");
+      return;
+    }
+  
+    if (clickedCoordinates) {
+      drawCircle(clickedCoordinates, maxDistance); // Gambar lingkaran pada peta
+      const roads = await fetchRoads(clickedCoordinates[0], clickedCoordinates[1], maxDistance); // Panggil fungsi untuk mencari jalan
+      if (roads && roads.length > 0) {
+        alert(`Jalan ditemukan dalam radius ${maxDistance} km.`);
+      } else {
+        alert(`Tidak ada jalan ditemukan dalam radius ${maxDistance} km.`);
+      }
+    }
+  });
+  
+  // Fungsi untuk menggambar lingkaran pada peta
+  function drawCircle(coords, radius) {
+    const circleFeature = new Feature({
+      geometry: new Circle(fromLonLat(coords), radius * 1000), // Radius dalam meter
+    });
+  
+    // Hapus lingkaran yang ada dan tambahkan lingkaran baru
+    circleLayer.getSource().clear();
+    circleLayer.getSource().addFeature(circleFeature);
   }
-}
-
-// Menangani pengiriman form pencarian
-document.getElementById("search-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const maxDistance = parseFloat(document.getElementById("max-distance").value);
-  if (isNaN(maxDistance) || maxDistance <= 0) {
-    alert("Masukkan jarak yang valid dalam kilometer.");
-    return;
-  }
-  if (clickedCoordinates) {
-    drawCircle(clickedCoordinates, maxDistance); // Gambar lingkaran pada peta
-    searchRoads(maxDistance); // Panggil fungsi untuk mencari jalan
-  }
-});
-
-// Inisialisasi peta,
-window.addEventListener("DOMContentLoaded", () => {
-  displayMap();
-});
+  
