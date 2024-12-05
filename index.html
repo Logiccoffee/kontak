@@ -143,6 +143,51 @@ body {
 .search-distance-container button:hover {
   background-color: #805700;
 }
+/* Styles Region */
+.search-region-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin-top: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Lato';
+}
+
+.search-region-container form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-region-container label {
+  font-size: 14px;
+  color: #09431f;
+}
+
+.search-region-container input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-region-container button {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #ffffff;
+  background-color: #09431f;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-region-container button:hover {
+  background-color: #805700;
+}
 
 @media screen and (max-width: 1024px) {
   .content-container {
@@ -263,6 +308,70 @@ body {
     padding: 6px 12px;
   }
 }
+
+/* For screens up to 1024px */
+@media screen and (max-width: 1024px) {
+  .search-region-container {
+    padding: 15px;
+    margin: 15px 0;
+  }
+
+  #search-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #region {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  #search-button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+
+  #search-form label {
+    font-size: 1rem;
+    text-align: left;
+  }
+}
+
+/* For screens up to 768px */
+@media screen and (max-width: 768px) {
+  #search-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #region {
+    width: 100%;
+  }
+
+  #search-button {
+    width: 100%;
+  }
+}
+
+/* For screens up to 480px */
+@media screen and (max-width: 480px) {
+  #search-form label {
+    font-size: 0.9rem;
+  }
+
+  #region {
+    font-size: 0.9rem;
+    padding: 6px;
+  }
+
+  #search-button {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+
   </style>
   <body>
     <!-- Top Bar -->
@@ -357,6 +466,19 @@ body {
         name="max-distance"
         placeholder="Enter distance"
         min="1"
+        required
+      />
+      <button type="submit" id="search-button">Search</button>
+    </form>
+  </div>
+  <div class="search-region-container">
+    <form id="search-form">
+      <label for="region">Search Region:</label>
+      <input
+        type="text"
+        id="region"
+        name="region"
+        placeholder="Enter region"
         required
       />
       <button type="submit" id="search-button">Search</button>
