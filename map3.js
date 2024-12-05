@@ -164,7 +164,7 @@ document.getElementById("search-form").addEventListener("submit", (event) => {
   }
 });
 
-// Inisialisasi peta
+// Inisialisasi peta,
 window.addEventListener("DOMContentLoaded", () => {
   displayMap();
 });
