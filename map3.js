@@ -121,6 +121,26 @@ function updateMarker(coords) {
   markerLayer.getSource().addFeature(marker);
 }
 
+// Fungsi untuk menghitung jarak antara dua koordinat (Haversine formula)
+function calculateDistance(coord1, coord2) {
+  const R = 6371; // Radius bumi dalam km
+  const lat1 = coord1[1];
+  const lon1 = coord1[0];
+  const lat2 = coord2[1];
+  const lon2 = coord2[0];
+
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // Jarak dalam km
+  return distance;
+}
+
 // Fungsi untuk menggambar lingkaran pada peta
 function drawCircle(coords, radius) {
   const circleFeature = new Feature({
@@ -229,7 +249,17 @@ document.getElementById("search-titik-pengguna").addEventListener("submit", (eve
 
   // Gambar garis dari titik pengguna ke Logic Coffee
   drawLine(userCoords);
+
+  // Hitung jarak antara pengguna dan Logic Coffee
+  const distance = calculateDistance(userCoords, logicCoffeeCoords);
+  const maxDistance = parseFloat(document.getElementById("max-distance").value);
+
+  // Periksa apakah jarak lebih dari radius maksimum
+  if (distance > maxDistance) {
+    alert("Peringatan: Anda terlalu jauh dari Logic Coffee! Jarak Anda: " + distance.toFixed(2) + " km");
+  }
 });
+
 
 // Menampilkan peta saat halaman selesai dimuat
 window.addEventListener("DOMContentLoaded", () => {
