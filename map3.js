@@ -67,7 +67,7 @@ const circleLayer = new VectorLayer({
 function displayMap() {
   map = new Map({
     target: "map",
-    layers: [basemap, markerLayer, circleLayer],
+    layers: [basemap, markerLayer, circleLayer, lineLayer],
     view: mapView,
   });
 
