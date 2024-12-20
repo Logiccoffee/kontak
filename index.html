@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -51,7 +51,6 @@ body {
   align-items: flex-start;
   padding: 20px;
   gap: 20px;
-
 }
 .bgimg {
   background-image: url('assets/bgimgplace.jpg');
@@ -332,201 +331,48 @@ body {
     font-size: 1rem;
     padding: 10px 15px;
   }
-
-  #search-form label {
-    font-size: 1rem;
-    text-align: left;
-  }
 }
-
-/* For screens up to 768px */
-@media screen and (max-width: 768px) {
-  #search-form {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  #region {
-    width: 100%;
-  }
-
-  #search-button {
-    width: 100%;
-  }
-}
-
-/* For screens up to 480px */
-@media screen and (max-width: 480px) {
-  #search-form label {
-    font-size: 0.9rem;
-  }
-
-  #region {
-    font-size: 0.9rem;
-    padding: 6px;
-  }
-
-  #search-button {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
-}
-
   </style>
   <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <span class="instagram"
-          ><a href="http://www.instagram.com/logic_coffeee"
-            ><i class="fa-brands fa-instagram"></i> Instagram</a
-          ></span
-        >
-        <span class="openhour"
-          ><a><i class="fa-solid fa-clock"></i> Buka Jam 08.00 - 18.00</a></span
-        >
-        <span class="address"
-          ><a href="https://logiccoffee.id.biz.id/kontak/"
-            ><i class="fa-solid fa-map-marker-alt"></i> Jl. Sariasih No. 54,
-            Sarijadi</a
-          ></span
-        >
+    <header>
+      <!-- Logo + Nav -->
+      <div class="top-bar">
+        <p class="brand">Universitas Logistik dan Bisnis Internasional</p>
+        <p class="contact">Alamat: Logic Coffee</p>
       </div>
-   
-      <!-- Top Bar Responsive Mode -->
-      <div class="top-bar-responsive">
-        <span class="address"
-          ><a href="https://logiccoffee.id.biz.id/kontak/"
-            ><i class="fa-solid fa-map-marker-alt"></i> Jl. Sariasih No. 54</a
-          ></span
-        >
-        <span class="openhour"
-          ><a><i class="fa-solid fa-clock"></i> Buka Jam 08.00 - 18.00</a></span
-        >
+    </header>
+
+    <section class="content-container">
+      <!-- The Google map will go here -->
+      <div class="bgimg" id="map"></div>
+      <div class="info-box">
+        <h2>Kontak Kami</h2>
+        <p>Alamat: Logic Coffee, Kp. Buah Jajar RT. 04 RW. 12, Kec. Majalaya, Kab. Bandung, 40382</p>
+        <p>Nomor Telepon: 083163685127</p>
+        <p>Email: muhammadrizki45u@gmail.com</p>
       </div>
-  
-      <!-- Main Header -->
-      <header class="header">
-        <div class="navbar">
-          <div class="brand">
-            <img
-              src="assets/logo.png"
-              alt="Brand Logo"
-              class="brand-logo"
-            />
-            <h1 class="brand-name">Logic Coffee</h1>
-          </div>
-  
-          <!-- Search Bar -->
-          <div class="search-bar">
-            <input type="text" placeholder="Cari produk..." />
-            <button class="search-button">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-          </div>
-          <div class="hamburger" onclick="toggleMenu()" style="display: none;">☰</div>
-          <nav class="nav-links">
-            <a href="https://logiccoffee.id.biz.id/"><i class="fa fa-house"></i> Beranda</a>
-            <a href="https://logiccoffee.github.io/menu/"><i class="fa fa-mug-hot"></i> Menu</a>
-            <a href="https://logiccoffee.id.biz.id/tentang.html"><i class="fa-solid fa-info-circle"></i> Tentang Kami</a>
-            <a href="https://logiccoffee.id.biz.id/kontak/"><i class="fa-solid fa-phone"></i>Kontak</a>
-            <a href="http://logiccoffee.id.biz.id/login/" class="btn-login">
-              <i class="fa-solid fa-user"></i> Login
-          </a>
-            
-          </nav>
-  
-          <!-- Profile and Cart -->
-          <!-- <div class="user-cart">
-            <span class="cart-icon">&#128722;<span class="cart-count">0</span></span>
-            <span class="profile">Nama Pengguna &#9662;</span>
-        </div> -->
-        </div>
-      </header>
+    </section>
+    
+    <!-- Search by Distance -->
+    <section class="search-distance-container">
+      <form action="search_results.html" method="get" id="search-form">
+        <label for="max-distance">Jarak Maksimum (km):</label>
+        <input type="number" id="max-distance" name="max-distance" placeholder="Max Distance" required />
+        <button type="submit" id="search-button">Cari</button>
+      </form>
+    </section>
+    
+    <!-- Search by Region -->
+    <section class="search-region-container">
+      <form action="search_results.html" method="get">
+        <label for="region">Pilih Wilayah:</label>
+        <input type="text" id="region" name="region" placeholder="Wilayah" required />
+        <button type="submit">Cari</button>
+      </form>
+    </section>
 
-   <!-- Konten Utama -->
-  <div class="content-container">
-    <div class="bgimg">
-    <div class="info-box">
-      <h2>Temui Kami di</h2>
-      <p><strong><i class="fa-solid fa-location-dot"></i> Alamat</strong><br>Jl. Sariasih No. 54, Sarijadi, Kota Bandung, Jawa Barat, Indonesia</p>
-      <p><strong><i class="fa-brands fa-instagram"></i> <a href="https://www.instagram.com/logic_coffeee">Instagram</strong><br>@logic_coffee</a></p>
-      <p><strong><i class="fa-brands fa-whatsapp"></i><a href="https://wa.me/6285183104981"> WhatsApp</strong><br>+62 851-8310-4981</a></p>
-    </div>
-  </div>
-     <div id="map"></div> 
-
-  </div>
-
-
-  <div class="search-distance-container">
-    <form id="search-form">
-        <label for="address">Address:</label>
-        <input
-          type="text"
-          id="address"
-          name="address"
-          placeholder="Enter address or area name"
-          required
-        />
-        <label for="max-distance">Max Distance (km):</label>
-        <input
-          type="number"
-          id="max-distance"
-          name="max-distance"
-          placeholder="Enter distance"
-          min="1"
-          required
-        />
-        <button type="submit" id="search-button">Search</button>
-    </form>
-</div>
-<div id="map" style="width: 100%; height: 500px;"></div>
-
-  
-    <footer class="site-footer">
-        <div class="footer-content">
-          <p class="footer-intro">Kenali lebih dekat dan temui kami di</p>
-          <div class="footer-links">
-            <span class="about"
-              ><a href=""
-                ><i class="fa-solid fa-info-circle"></i> Tentang</a
-              ></span
-            >
-            <span class="contact"
-              ><a href="http://">
-                <i class="fa-solid fa-phone"></i> Kontak</a
-              ></span
-            >
-            <span class="instagram"
-              ><a href="http://www.instagram.com/logic_coffeee"
-                ><i class="fa-brands fa-instagram"></i> Instagram</a
-              ></span
-            >
-            <span class="address"
-              ><a href="https://g.co/kgs/3VB5ztr"
-                ><i class="fa-solid fa-map-marker-alt"></i> Jl. Sariasih No. 54,
-                Sarijadi</a
-              ></span
-            >
-          </div>
-          <p>Logic Coffee &copy; 2024 All rights reserved.</p>
-        </div>
-      </footer>
-    <script type="module" src="map3.js"></script>
-    <script>
-      function toggleMenu() {
-        const navLinks = document.querySelector('.nav-links');
-        const searchBar = document.querySelector('.search-bar');
-  
-        navLinks.classList.toggle('active');
-  
-        if (window.innerWidth <= 768) {
-          const searchBarInNav = navLinks.querySelector('.search-bar');
-          if (!searchBarInNav) {
-            navLinks.prepend(searchBar); // Pindahkan search bar ke dalam menu pop-up
-          }
-        }
-      }
-    </script>
+    <footer>
+      <p>&copy; 2024 Logic Coffee. All rights reserved.</p>
+    </footer>
   </body>
 </html>

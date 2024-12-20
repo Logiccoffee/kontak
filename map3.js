@@ -7,14 +7,13 @@ import VectorLayer from "https://cdn.skypack.dev/ol/layer/Vector.js";
 import VectorSource from "https://cdn.skypack.dev/ol/source/Vector.js";
 import Feature from "https://cdn.skypack.dev/ol/Feature.js";
 import Point from "https://cdn.skypack.dev/ol/geom/Point.js";
-import Circle from "https://cdn.skypack.dev/ol/geom/Circle.js";
 import Style from "https://cdn.skypack.dev/ol/style/Style.js";
 import Icon from "https://cdn.skypack.dev/ol/style/Icon.js";
 import Stroke from "https://cdn.skypack.dev/ol/style/Stroke.js";
 import Fill from "https://cdn.skypack.dev/ol/style/Fill.js";
-import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js"; // Pastikan ini diimport
+import LineString from "https://cdn.skypack.dev/ol/geom/LineString.js"; 
 
-// Koordinat Logic Coffee (default)
+// Koordinat default Logic Coffee
 const logicCoffeeCoords = [107.57504888132391, -6.874693043534695];
 let clickedCoordinates = logicCoffeeCoords; // Default to Logic Coffee
 let map;
@@ -63,6 +62,17 @@ const circleLayer = new VectorLayer({
   }),
 });
 
+// Layer untuk garis
+const lineLayer = new VectorLayer({
+  source: new VectorSource(),
+  style: new Style({
+    stroke: new Stroke({
+      color: 'red', // Warna garis
+      width: 2, // Lebar garis
+    }),
+  }),
+});
+
 // Fungsi untuk menampilkan peta
 function displayMap() {
   map = new Map({
@@ -86,17 +96,6 @@ function displayMap() {
     drawLine(coords); // Gambar garis dari marker baru ke Logic Coffee
   });
 }
-
-// Layer untuk garis
-const lineLayer = new VectorLayer({
-  source: new VectorSource(),
-  style: new Style({
-    stroke: new Stroke({
-      color: 'red', // Warna garis
-      width: 2, // Lebar garis
-    }),
-  }),
-});
 
 // Fungsi untuk menggambar garis dari koordinat pengguna ke Logic Coffee
 function drawLine(userCoords) {
@@ -167,47 +166,6 @@ function getCookie(name) {
   return null; // Jika cookie tidak ditemukan, kembalikan null
 }
 
-// Menambahkan marker di Logic Coffee
-const logicCoffeeMarker = new Feature({
-  geometry: new Point(fromLonLat(logicCoffeeCoords)),
-});
-logicCoffeeMarker.setStyle(markerStyle); // Gaya marker
-
-// Menambahkan marker ke layer
-markerLayer.getSource().addFeature(logicCoffeeMarker);
-
-
-// Fungsi untuk fetch data dari backend menggunakan proxy 
-async function fetchRoads(longitude, latitude, maxDistance) {
-  try {
-    console.log("Fetching roads with params:", { longitude, latitude, maxDistance });
-
-    const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/logiccoffee/data/roads", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Login": token,  // Token dari cookie
-      },
-      body: JSON.stringify({
-        long: longitude,
-        lat: latitude,
-        max_distance: maxDistance,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("Roads fetched:", data);
-    return data; // Kembalikan data dari backend
-  } catch (error) {
-    console.error("Error fetching roads:", error);
-    return null; // Jika ada error, kembalikan null
-  }
-}
-
 // Menangani pengiriman form pencarian
 document.getElementById("search-form").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -228,7 +186,7 @@ document.getElementById("search-form").addEventListener("submit", (event) => {
   }
 });
 
-// Menangani pengiriman form pencarian
+// Menangani pengiriman form pencarian titik pengguna
 document.getElementById("search-titik-pengguna").addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -259,7 +217,6 @@ document.getElementById("search-titik-pengguna").addEventListener("submit", (eve
     alert("Peringatan: Anda terlalu jauh dari Logic Coffee! Jarak Anda: " + distance.toFixed(2) + " km");
   }
 });
-
 
 // Menampilkan peta saat halaman selesai dimuat
 window.addEventListener("DOMContentLoaded", () => {
