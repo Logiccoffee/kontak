@@ -265,4 +265,3 @@ document.getElementById("search-titik-pengguna").addEventListener("submit", (eve
 window.addEventListener("DOMContentLoaded", () => {
   displayMap();
 });
-
